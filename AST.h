@@ -46,22 +46,22 @@ public:
                                                                               args(move(args)) {}
 };
 
-class Prototype : public ExpressionAST
+class PrototypeAST : public ExpressionAST
 {
     string name;
     vector<unique_ptr<ExpressionAST>> args;
 
 public:
-    Prototype(string funcName, vector<unique_ptr<ExpressionAST>> args) : name(funcName),
+    PrototypeAST(string funcName, vector<unique_ptr<ExpressionAST>> args) : name(funcName),
                                                                          args(move(args)) {}
 };
 
-class FunctionExpression : public ExpressionAST
+class FunctionExpressionAST : public ExpressionAST
 {
-    unique_ptr<Prototype> prototype;
+    unique_ptr<PrototypeAST> prototype;
     unique_ptr<ExpressionAST> body;
 
 public:
-    FunctionExpression(unique_ptr<Prototype> prototype,
+    FunctionExpressionAST(unique_ptr<PrototypeAST> prototype,
                        unique_ptr<ExpressionAST> body) : prototype(move(prototype)), body(move(body)) {}
 };
