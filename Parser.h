@@ -1,4 +1,6 @@
-#include <AST.h>
+#include "AST.h"
+
+static int curToken;
 
 static int getNextToken();
 

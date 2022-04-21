@@ -3,7 +3,6 @@
 #include <map>
 
 static map<char, int> binOperatorPrecedence;
-static int curToken;
 
 static int getNextToken()
 {
@@ -52,7 +51,7 @@ static unique_ptr<ExpressionAST> parseIdentifierExpr()
         return make_unique<VariableExpAST>(nameId);
 
     getNextToken();
-    vector<unique_ptr<ExpressionAST>> args;
+    vector<unique_ptr<ExpressionAST> > args;
 
     if (curToken != ')')
     {
@@ -74,7 +73,7 @@ static unique_ptr<ExpressionAST> parseIdentifierExpr()
 
     getNextToken();
 
-    return make_unique<CallExpression>(nameId, args);
+    return make_unique<CallExpressionAST>(nameId, move(args));
 }
 
 static unique_ptr<ExpressionAST> parsePrimary()

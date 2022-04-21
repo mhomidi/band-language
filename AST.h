@@ -36,24 +36,24 @@ public:
                  unique_ptr<ExpressionAST> rhs) : operation(op), lhs(move(lhs)), rhs(move(rhs)) {}
 };
 
-class CallExpression : public ExpressionAST
+class CallExpressionAST : public ExpressionAST
 {
     string funcName;
-    vector<unique_ptr<ExpressionAST>> args;
+    vector<unique_ptr<ExpressionAST> > args;
 
 public:
-    CallExpression(string funcName, vector<unique_ptr<ExpressionAST>> args) : funcName(funcName),
+    CallExpressionAST(string funcName, vector<unique_ptr<ExpressionAST> > args) : funcName(funcName),
                                                                               args(move(args)) {}
 };
 
 class PrototypeAST : public ExpressionAST
 {
     string name;
-    vector<unique_ptr<ExpressionAST>> args;
+    vector<string> args;
 
 public:
-    PrototypeAST(string funcName, vector<unique_ptr<ExpressionAST>> args) : name(funcName),
-                                                                         args(move(args)) {}
+    PrototypeAST(string funcName, vector<string> args) : name(funcName),
+                                                        args(move(args)) {}
 };
 
 class FunctionExpressionAST : public ExpressionAST
@@ -63,5 +63,5 @@ class FunctionExpressionAST : public ExpressionAST
 
 public:
     FunctionExpressionAST(unique_ptr<PrototypeAST> prototype,
-                       unique_ptr<ExpressionAST> body) : prototype(move(prototype)), body(move(body)) {}
+                          unique_ptr<ExpressionAST> body) : prototype(move(prototype)), body(move(body)) {}
 };

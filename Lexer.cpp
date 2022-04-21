@@ -33,7 +33,7 @@ static int getToken()
         {
             numStr += lastChar;
             lastChar = getchar();
-        } while (isdigit(lastChar) || (lastChar == '.' && !lastChar));
+        } while (isdigit(lastChar) || (lastChar == '.' && !isDot));
 
         numVal = strtod(numStr.c_str(), 0);
         return tok_number;
