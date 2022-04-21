@@ -3,9 +3,9 @@
 
 using namespace std;
 
-static int getToken()
+int getToken()
 {
-    static int lastChar = ' ';
+    int lastChar = ' ';
 
     while (isspace(lastChar))
         lastChar = getchar();

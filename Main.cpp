@@ -1,7 +1,7 @@
 #include "Parser.h"
 #include "Lexer.h"
 
-static void handleDefinition()
+void handleDefinition()
 {
     if (parseDefinition())
         fprintf(stderr, "Parsed a function definition.\n");
@@ -9,7 +9,7 @@ static void handleDefinition()
         getNextToken();
 }
 
-static void handleTopLevelExpression()
+void handleTopLevelExpression()
 {
     if (parseTopLevelExpression())
         fprintf(stderr, "Parsed a top level expressoin.\n");
@@ -17,7 +17,7 @@ static void handleTopLevelExpression()
         getNextToken();
 }
 
-static void mainLoop()
+void mainLoop()
 {
     while (true)
     {

@@ -9,4 +9,4 @@ enum Token
 static std::string identifierStr;
 static double numVal;
 
-static inline int getToken();
+int getToken();

@@ -4,7 +4,7 @@
 
 static map<char, int> binOperatorPrecedence;
 
-static int getNextToken()
+int getNextToken()
 {
     return curToken = getToken();
 }
@@ -21,14 +21,14 @@ unique_ptr<PrototypeAST> logErrorProto(const char *errorStr)
     return nullptr;
 }
 
-static unique_ptr<ExpressionAST> parseNumberExpr()
+unique_ptr<ExpressionAST> parseNumberExpr()
 {
     auto result = make_unique<NumberExpAST>(numVal);
     getNextToken();
     return move(result);
 }
 
-static unique_ptr<ExpressionAST> parseParenthesesExpr()
+unique_ptr<ExpressionAST> parseParenthesesExpr()
 {
     getNextToken();
     auto value = parseExpression();
@@ -42,7 +42,7 @@ static unique_ptr<ExpressionAST> parseParenthesesExpr()
     return value;
 }
 
-static unique_ptr<ExpressionAST> parseIdentifierExpr()
+unique_ptr<ExpressionAST> parseIdentifierExpr()
 {
     string nameId = identifierStr;
     getNextToken();
@@ -76,7 +76,7 @@ static unique_ptr<ExpressionAST> parseIdentifierExpr()
     return make_unique<CallExpressionAST>(nameId, move(args));
 }
 
-static unique_ptr<ExpressionAST> parsePrimary()
+unique_ptr<ExpressionAST> parsePrimary()
 {
     switch (curToken)
     {
@@ -91,7 +91,7 @@ static unique_ptr<ExpressionAST> parsePrimary()
     }
 }
 
-static int getTokPrecedence()
+int getTokPrecedence()
 {
     if (!isascii(curToken))
         return -1;
@@ -111,7 +111,7 @@ void initialBinOpPrecs()
     binOperatorPrecedence['*'] = 40;
 }
 
-static unique_ptr<ExpressionAST> parseBinaryOpRHS(int opCodePrec, unique_ptr<ExpressionAST> lhs)
+unique_ptr<ExpressionAST> parseBinaryOpRHS(int opCodePrec, unique_ptr<ExpressionAST> lhs)
 {
     while (true)
     {
@@ -139,7 +139,7 @@ static unique_ptr<ExpressionAST> parseBinaryOpRHS(int opCodePrec, unique_ptr<Exp
     }
 }
 
-static unique_ptr<ExpressionAST> parseExpression()
+unique_ptr<ExpressionAST> parseExpression()
 {
     auto lhs = parsePrimary();
     if (!lhs)
@@ -148,7 +148,7 @@ static unique_ptr<ExpressionAST> parseExpression()
     return parseBinaryOpRHS(0, move(lhs));
 }
 
-static unique_ptr<PrototypeAST> parsePrototype()
+unique_ptr<PrototypeAST> parsePrototype()
 {
     if (curToken != tok_identifier)
         return logErrorProto("Expected Function name in ");
@@ -170,7 +170,7 @@ static unique_ptr<PrototypeAST> parsePrototype()
     return make_unique<PrototypeAST>(funcName, move(argNames));
 }
 
-static unique_ptr<FunctionExpressionAST> parseDefinition()
+unique_ptr<FunctionExpressionAST> parseDefinition()
 {
     getNextToken();
 
@@ -184,7 +184,7 @@ static unique_ptr<FunctionExpressionAST> parseDefinition()
     return nullptr;
 }
 
-static unique_ptr<FunctionExpressionAST> parseTopLevelExpression()
+unique_ptr<FunctionExpressionAST> parseTopLevelExpression()
 {
     if (auto exp = parseExpression())
     {

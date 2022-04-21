@@ -39,11 +39,11 @@ public:
 class CallExpressionAST : public ExpressionAST
 {
     string funcName;
-    vector<unique_ptr<ExpressionAST> > args;
+    vector<unique_ptr<ExpressionAST>> args;
 
 public:
-    CallExpressionAST(string funcName, vector<unique_ptr<ExpressionAST> > args) : funcName(funcName),
-                                                                              args(move(args)) {}
+    CallExpressionAST(string funcName, vector<unique_ptr<ExpressionAST>> args) : funcName(funcName),
+                                                                                 args(move(args)) {}
 };
 
 class PrototypeAST : public ExpressionAST
@@ -53,7 +53,7 @@ class PrototypeAST : public ExpressionAST
 
 public:
     PrototypeAST(string funcName, vector<string> args) : name(funcName),
-                                                        args(move(args)) {}
+                                                         args(move(args)) {}
 };
 
 class FunctionExpressionAST : public ExpressionAST
