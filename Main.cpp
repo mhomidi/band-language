@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include "Lexer.h"
+#include "Common.h"
 
 void handleDefinition()
 {

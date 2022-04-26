@@ -1,5 +1,9 @@
 #include <iostream>
 #include "Lexer.h"
+#include "Common.h"
+
+std::string identifierStr;
+double numVal;
 
 using namespace std;
 
@@ -13,7 +17,7 @@ int getToken()
     if (isalpha(lastChar))
     {
         identifierStr = lastChar;
-        while (isalnum(lastChar))
+        while (isalnum(lastChar = getchar()))
             identifierStr += lastChar;
 
         if (identifierStr == "def")

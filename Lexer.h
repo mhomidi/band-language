@@ -6,7 +6,5 @@ enum Token
     tok_number = -4
 };
 
-static std::string identifierStr;
-static double numVal;
 
 int getToken();

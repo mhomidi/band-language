@@ -1,7 +1,9 @@
 #include "Parser.h"
 #include "Lexer.h"
+#include "Common.h"
 #include <map>
 
+int curToken;
 static map<char, int> binOperatorPrecedence;
 
 int getNextToken()
@@ -51,7 +53,7 @@ unique_ptr<ExpressionAST> parseIdentifierExpr()
         return make_unique<VariableExpAST>(nameId);
 
     getNextToken();
-    vector<unique_ptr<ExpressionAST> > args;
+    vector<unique_ptr<ExpressionAST>> args;
 
     if (curToken != ')')
     {

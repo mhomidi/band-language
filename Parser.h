@@ -1,7 +1,5 @@
 #include "AST.h"
 
-static int curToken;
-
 int getNextToken();
 
 unique_ptr<ExpressionAST> logError(const char *errorStr);
