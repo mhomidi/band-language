@@ -13,7 +13,7 @@ void handleDefinition()
 void handleTopLevelExpression()
 {
     if (parseTopLevelExpression())
-        printf("Parsed a top level expressoin.\n");
+        printf("Parsed a top level expression.\n");
     else
         getNextToken();
 }
@@ -27,7 +27,6 @@ void mainLoop()
         case tok_eof:
             return;
         case ';':
-            getNextToken();
             break;
         case tok_def:
             handleDefinition();
@@ -36,7 +35,7 @@ void mainLoop()
             handleTopLevelExpression();
             break;
         }
-        printf("ready> ", curToken);
+        printf("ready> ");
         getNextToken();
     }
 }

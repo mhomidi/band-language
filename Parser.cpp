@@ -8,7 +8,9 @@ static map<char, int> binOperatorPrecedence;
 
 int getNextToken()
 {
-    return curToken = getToken();
+    curToken = getToken();
+    // printf("%i %s\n", curToken, identifierStr.c_str()); // For debug
+    return curToken;
 }
 
 unique_ptr<ExpressionAST> logError(const char *errorStr)
@@ -107,6 +109,7 @@ int getTokPrecedence()
 
 void initialBinOpPrecs()
 {
+    binOperatorPrecedence['='] = 1;
     binOperatorPrecedence['<'] = 10;
     binOperatorPrecedence['-'] = 20;
     binOperatorPrecedence['+'] = 20;
@@ -119,7 +122,7 @@ unique_ptr<ExpressionAST> parseBinaryOpRHS(int opCodePrec, unique_ptr<Expression
     {
         int tokPrec = getTokPrecedence();
 
-        if (tokPrec < opCodePrec)
+        if (tokPrec <= opCodePrec)
             return lhs;
 
         int binOp = curToken;
@@ -130,7 +133,7 @@ unique_ptr<ExpressionAST> parseBinaryOpRHS(int opCodePrec, unique_ptr<Expression
             return nullptr;
 
         int nextPrec = getTokPrecedence();
-        if (tokPrec < nextPrec)
+        if (tokPrec <= nextPrec)
         {
             rhs = parseBinaryOpRHS(tokPrec + 1, move(rhs));
             if (!rhs)

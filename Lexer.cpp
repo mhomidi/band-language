@@ -4,13 +4,12 @@
 
 std::string identifierStr;
 double numVal;
+int lastChar = ' ';
 
 using namespace std;
 
 int getToken()
 {
-    int lastChar = ' ';
-
     while (isspace(lastChar))
         lastChar = getchar();
 
