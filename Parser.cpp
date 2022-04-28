@@ -13,7 +13,7 @@ int getNextToken()
 
 unique_ptr<ExpressionAST> logError(const char *errorStr)
 {
-    fprintf(stderr, "Error: %s\n", errorStr);
+    printf("Error: %s\n", errorStr);
     return nullptr;
 }
 

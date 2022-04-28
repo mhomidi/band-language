@@ -5,7 +5,7 @@
 void handleDefinition()
 {
     if (parseDefinition())
-        fprintf(stderr, "Parsed a function definition.\n");
+        printf("Parsed a function definition.\n");
     else
         getNextToken();
 }
@@ -13,7 +13,7 @@ void handleDefinition()
 void handleTopLevelExpression()
 {
     if (parseTopLevelExpression())
-        fprintf(stderr, "Parsed a top level expressoin.\n");
+        printf("Parsed a top level expressoin.\n");
     else
         getNextToken();
 }
@@ -22,7 +22,6 @@ void mainLoop()
 {
     while (true)
     {
-        fprintf(stderr, "ready> ");
         switch (curToken)
         {
         case tok_eof:
@@ -37,6 +36,8 @@ void mainLoop()
             handleTopLevelExpression();
             break;
         }
+        printf("ready> ", curToken);
+        getNextToken();
     }
 }
 
@@ -44,7 +45,7 @@ int main()
 {
     initialBinOpPrecs();
 
-    fprintf(stderr, "ready> ");
+    printf("ready> ");
     getNextToken();
 
     mainLoop();
