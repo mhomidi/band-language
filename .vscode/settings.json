@@ -61,6 +61,8 @@
         "typeinfo": "cpp",
         "unordered_map": "cpp",
         "variant": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "*.inc": "cpp",
+        "*.def": "cpp"
     }
 }
