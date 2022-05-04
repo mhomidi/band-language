@@ -72,3 +72,36 @@ Value *BinaryExpAST::codegen()
     }
 }
 
+Value *CallExpressionAST::codegen()
+{
+    Function *callFunction = module->getFunction(this->funcName);
+    if (!callFunction)
+        return logErrorValue("Unknown function");
+
+    if (callFunction->arg_size() != this->args.size())
+        return logErrorValue("Incorrect number of arguments");
+
+    std::vector<Value *> argValues;
+    for (int i = 0; i < callFunction->arg_size(); i++)
+    {
+        argValues.push_back(this->args[i]->codegen());
+        if (!argValues.back())
+            return nullptr;
+    }
+
+    return builder.CreateCall(callFunction, argValues, "callf");
+}
+
+Function *PrototypeAST::codegen()
+{
+    std::vector<Type *> doubles(this->args.size(), Type::getDoubleTy(ctx));
+    FunctionType *functionType = FunctionType::get(Type::getDoubleTy(ctx), doubles, false);
+    Function *function = Function::Create(functionType,
+                                          Function::ExternalLinkage, this->name, module.get());
+
+    unsigned index = 0;
+    for (auto &arg : function->args())
+        arg.setName(this->args[index++]);
+
+    return function;
+}
