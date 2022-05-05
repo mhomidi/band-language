@@ -11,7 +11,6 @@
 #include "llvm/IR/Verifier.h"
 #include <map>
 #include "Parser.h"
-#include "AST.h"
 
 using namespace llvm;
 
@@ -49,20 +48,22 @@ Value *BinaryExpAST::codegen()
     if (!leftHandSide || !rightHandSide)
         return nullptr;
 
-    switch (this->operator)
+    switch (this->op)
     {
     case '+':
-        return builder.CreateFAdd(leftHandSide, rightHandSide, "addf");
+        return builder.CreateFAdd(leftHandSide, rightHandSide, "addres");
 
     case '-':
-        return builder.CreateFSub(leftHandSide, rightHandSide, "subf");
+        return builder.CreateFSub(leftHandSide, rightHandSide, "subres");
 
     case '*':
-        return builder.CreateFMul(leftHandSide, rightHandSide, "mulf");
+        return builder.CreateFMul(leftHandSide, rightHandSide, "mulres");
 
     case '<':
-        Value *result = builder.CreateFCmp(leftHandSide, rightHandSide, "cmpf");
-        return builder.CreateUIToFP(result, Type::getDoubleTy(ctx), "bool_cmp");
+    {
+        Value *result = builder.CreateFCmpULT(leftHandSide, rightHandSide, "cmpres");
+        return builder.CreateUIToFP(result, Type::getDoubleTy(ctx), "comres");
+    }
 
     case '=':
         return builder.CreateStore(leftHandSide, rightHandSide);
@@ -89,7 +90,7 @@ Value *CallExpressionAST::codegen()
             return nullptr;
     }
 
-    return builder.CreateCall(callFunction, argValues, "callf");
+    return builder.CreateCall(callFunction, argValues, "callres");
 }
 
 Function *PrototypeAST::codegen()
@@ -108,7 +109,7 @@ Function *PrototypeAST::codegen()
 
 Function *FunctionExpressionAST::codegen()
 {
-    Function *function = module->getFunction(this->prototype->name);
+    Function *function = module->getFunction(this->prototype->getName());
 
     if (!function)
     {
@@ -118,19 +119,19 @@ Function *FunctionExpressionAST::codegen()
     }
 
     if (function->empty())
-        return dynamic_cast<Function *>(logErrorValue("Function can not be redefine"));
+        return (Function *)logErrorValue("Function can not be redefine");
 
     BasicBlock *basicBlock = BasicBlock::Create(ctx, "entry_block", function);
     builder.SetInsertPoint(basicBlock);
 
     namedValues.clear();
     for (auto &arg : function->args())
-        namedValues[arg.getName] = arg;
+        namedValues[arg.getName().str()] = &arg;
 
     if (Value *returnValue = this->body->codegen())
     {
         builder.CreateRet(returnValue);
-        verifyFunction(function);
+        verifyFunction(*function);
 
         return function;
     }

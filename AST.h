@@ -4,6 +4,7 @@
 #include <vector>
 
 using namespace std;
+using namespace llvm;
 
 class ExpressionAST
 {
@@ -32,12 +33,12 @@ public:
 
 class BinaryExpAST : public ExpressionAST
 {
-    char operator;
+    char op;
     unique_ptr<ExpressionAST> lhs, rhs;
 
 public:
     BinaryExpAST(char op, unique_ptr<ExpressionAST> lhs,
-                 unique_ptr<ExpressionAST> rhs) : operator(op), lhs(move(lhs)), rhs(move(rhs)) {}
+                 unique_ptr<ExpressionAST> rhs) : op(op), lhs(move(lhs)), rhs(move(rhs)) {}
     Value *codegen() override;
 };
 
@@ -52,7 +53,7 @@ public:
     Value *codegen() override;
 };
 
-class PrototypeAST : public ExpressionAST
+class PrototypeAST
 {
     string name;
     vector<string> args;
@@ -60,10 +61,11 @@ class PrototypeAST : public ExpressionAST
 public:
     PrototypeAST(string funcName, vector<string> args) : name(funcName),
                                                          args(move(args)) {}
-    Value *codegen() override;
+    Function *codegen();
+    string getName() { return this->name; }
 };
 
-class FunctionExpressionAST : public ExpressionAST
+class FunctionExpressionAST
 {
     unique_ptr<PrototypeAST> prototype;
     unique_ptr<ExpressionAST> body;
@@ -71,5 +73,5 @@ class FunctionExpressionAST : public ExpressionAST
 public:
     FunctionExpressionAST(unique_ptr<PrototypeAST> prototype,
                           unique_ptr<ExpressionAST> body) : prototype(move(prototype)), body(move(body)) {}
-    Value *codegen() override;
+    Function *codegen();
 };
