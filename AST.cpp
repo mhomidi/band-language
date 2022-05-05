@@ -105,3 +105,36 @@ Function *PrototypeAST::codegen()
 
     return function;
 }
+
+Function *FunctionExpressionAST::codegen()
+{
+    Function *function = module->getFunction(this->prototype->name);
+
+    if (!function)
+    {
+        function = this->prototype->codegen();
+        if (!function)
+            return nullptr;
+    }
+
+    if (function->empty())
+        return dynamic_cast<Function *>(logErrorValue("Function can not be redefine"));
+
+    BasicBlock *basicBlock = BasicBlock::Create(ctx, "entry_block", function);
+    builder.SetInsertPoint(basicBlock);
+
+    namedValues.clear();
+    for (auto &arg : function->args())
+        namedValues[arg.getName] = arg;
+
+    if (Value *returnValue = this->body->codegen())
+    {
+        builder.CreateRet(returnValue);
+        verifyFunction(function);
+
+        return function;
+    }
+
+    function->eraseFromParent();
+    return nullptr;
+}
