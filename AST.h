@@ -6,6 +6,8 @@
 using namespace std;
 using namespace llvm;
 
+void initialModules();
+
 class ExpressionAST
 {
 public:

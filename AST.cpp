@@ -15,9 +15,17 @@
 using namespace llvm;
 
 static LLVMContext ctx;
-static IRBuilder<> builder(ctx);
+static IRBuilder<> builder;
 static unique_ptr<Module> module;
 static map<std::string, Value *> namedValues;
+
+void initialModules()
+{
+    ctx = std::make_unique<LLVMContext>();
+    module = std::make_unique<Module>("myModule", ctx);
+
+    builder = std::make_unique<builder<>>(ctx);
+}
 
 Value *logErrorValue(const char *errStr)
 {

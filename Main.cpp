@@ -4,16 +4,30 @@
 
 void handleDefinition()
 {
-    if (parseDefinition())
-        printf("Parsed a function definition.\n");
+    if (auto funcAST = parseDefinition())
+    {
+        if (auto *funcIR = funcAST->codegen())
+        {
+            printf("Read function definition: ");
+            funcIR->print(errs());
+            printf("\n");
+        }
+    }
     else
         getNextToken();
 }
 
 void handleTopLevelExpression()
 {
-    if (parseTopLevelExpression())
-        printf("Parsed a top level expression.\n");
+    if (auto topLevelExp = parseTopLevelExpression())
+    {
+        if (auto *topLevelIR = topLevelExp->codegen())
+        {
+            printf("Read top level expression: ");
+            topLevelIR->print(errs());
+            printf("\n");
+        }
+    }
     else
         getNextToken();
 }
