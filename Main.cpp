@@ -1,6 +1,7 @@
 #include "Parser.h"
 #include "Lexer.h"
 #include "Common.h"
+#include "llvm/IR/Function.h"
 
 void handleDefinition()
 {

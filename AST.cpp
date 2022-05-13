@@ -14,17 +14,17 @@
 
 using namespace llvm;
 
-static LLVMContext ctx;
-static IRBuilder<> builder;
-static unique_ptr<Module> module;
+static std::unique_ptr<LLVMContext> ctx;
+static std::unique_ptr<IRBuilder<>> builder;
+static std::unique_ptr<Module> module;
 static map<std::string, Value *> namedValues;
 
 void initialModules()
 {
     ctx = std::make_unique<LLVMContext>();
-    module = std::make_unique<Module>("myModule", ctx);
+    module = std::make_unique<Module>("myModule", *ctx);
 
-    builder = std::make_unique<builder<>>(ctx);
+    builder = std::make_unique<IRBuilder<>>(*ctx);
 }
 
 Value *logErrorValue(const char *errStr)
@@ -35,7 +35,7 @@ Value *logErrorValue(const char *errStr)
 
 Value *NumberExpAST::codegen()
 {
-    return ConstantFP::get(ctx, APFloat(this->value));
+    return ConstantFP::get(*ctx, APFloat(this->value));
 }
 
 Value *VariableExpAST::codegen()
@@ -59,22 +59,22 @@ Value *BinaryExpAST::codegen()
     switch (this->op)
     {
     case '+':
-        return builder.CreateFAdd(leftHandSide, rightHandSide, "addres");
+        return builder->CreateFAdd(leftHandSide, rightHandSide, "addres");
 
     case '-':
-        return builder.CreateFSub(leftHandSide, rightHandSide, "subres");
+        return builder->CreateFSub(leftHandSide, rightHandSide, "subres");
 
     case '*':
-        return builder.CreateFMul(leftHandSide, rightHandSide, "mulres");
+        return builder->CreateFMul(leftHandSide, rightHandSide, "mulres");
 
     case '<':
     {
-        Value *result = builder.CreateFCmpULT(leftHandSide, rightHandSide, "cmpres");
-        return builder.CreateUIToFP(result, Type::getDoubleTy(ctx), "comres");
+        Value *result = builder->CreateFCmpULT(leftHandSide, rightHandSide, "cmpres");
+        return builder->CreateUIToFP(result, Type::getDoubleTy(*ctx), "comres");
     }
 
     case '=':
-        return builder.CreateStore(leftHandSide, rightHandSide);
+        return builder->CreateStore(leftHandSide, rightHandSide);
 
     default:
         return logErrorValue("Unknown operation");
@@ -98,13 +98,13 @@ Value *CallExpressionAST::codegen()
             return nullptr;
     }
 
-    return builder.CreateCall(callFunction, argValues, "callres");
+    return builder->CreateCall(callFunction, argValues, "callres");
 }
 
 Function *PrototypeAST::codegen()
 {
-    std::vector<Type *> doubles(this->args.size(), Type::getDoubleTy(ctx));
-    FunctionType *functionType = FunctionType::get(Type::getDoubleTy(ctx), doubles, false);
+    std::vector<Type *> doubles(this->args.size(), Type::getDoubleTy(*ctx));
+    FunctionType *functionType = FunctionType::get(Type::getDoubleTy(*ctx), doubles, false);
     Function *function = Function::Create(functionType,
                                           Function::ExternalLinkage, this->name, module.get());
 
@@ -129,8 +129,8 @@ Function *FunctionExpressionAST::codegen()
     if (function->empty())
         return (Function *)logErrorValue("Function can not be redefine");
 
-    BasicBlock *basicBlock = BasicBlock::Create(ctx, "entry_block", function);
-    builder.SetInsertPoint(basicBlock);
+    BasicBlock *basicBlock = BasicBlock::Create(*ctx, "entry_block", function);
+    builder->SetInsertPoint(basicBlock);
 
     namedValues.clear();
     for (auto &arg : function->args())
@@ -138,7 +138,7 @@ Function *FunctionExpressionAST::codegen()
 
     if (Value *returnValue = this->body->codegen())
     {
-        builder.CreateRet(returnValue);
+        builder->CreateRet(returnValue);
         verifyFunction(*function);
 
         return function;
