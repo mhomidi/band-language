@@ -126,7 +126,7 @@ Function *FunctionExpressionAST::codegen()
             return nullptr;
     }
 
-    if (function->empty())
+    if (!function->empty())
         return (Function *)logErrorValue("Function can not be redefine");
 
     BasicBlock *basicBlock = BasicBlock::Create(*ctx, "entry_block", function);

@@ -61,6 +61,7 @@ int main()
 
     printf("ready> ");
     getNextToken();
+    initialModules();
 
     mainLoop();
 
