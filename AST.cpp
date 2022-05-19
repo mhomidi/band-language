@@ -6,9 +6,15 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Transforms/InstCombine/InstCombine.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Scalar/GVN.h"
 #include <map>
 #include "Parser.h"
 
@@ -18,6 +24,7 @@ static std::unique_ptr<LLVMContext> ctx;
 static std::unique_ptr<IRBuilder<>> builder;
 static std::unique_ptr<Module> module;
 static map<std::string, Value *> namedValues;
+static std::unique_ptr<legacy::FunctionPassManager> functionPassManager;
 
 void initialModules()
 {
@@ -25,6 +32,15 @@ void initialModules()
     module = std::make_unique<Module>("myModule", *ctx);
 
     builder = std::make_unique<IRBuilder<>>(*ctx);
+
+    functionPassManager = make_unique<legacy::FunctionPassManager>(module.get());
+
+    functionPassManager->add(createInstructionCombiningPass());
+    functionPassManager->add(createReassociatePass());
+    functionPassManager->add(createGVNPass());
+    functionPassManager->add(createCFGSimplificationPass());
+
+    functionPassManager->doInitialization();
 }
 
 Value *logErrorValue(const char *errStr)
