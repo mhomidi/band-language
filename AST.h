@@ -1,4 +1,10 @@
 #include "llvm/IR/Value.h"
+#include <algorithm>
+#include <cassert>
+#include <cctype>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <memory>
 #include <vector>
@@ -6,7 +12,8 @@
 using namespace std;
 using namespace llvm;
 
-void initialModules();
+void initialModulesAndPassManager();
+void initializeNativeTargets();
 
 class ExpressionAST
 {

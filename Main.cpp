@@ -3,6 +3,8 @@
 #include "Common.h"
 #include "llvm/IR/Function.h"
 
+llvm::ExitOnError exitOnError;
+
 void handleDefinition()
 {
     if (auto funcAST = parseDefinition())
@@ -24,9 +26,18 @@ void handleTopLevelExpression()
     {
         if (auto *topLevelIR = topLevelExp->codegen())
         {
-            printf("Read top level expression: ");
-            topLevelIR->print(errs());
-            printf("\n");
+            auto runtime = myJIT->getMainJITDylib().createResourceTracker();
+
+            auto threadSafeModule = llvm::orc::ThreadSafeModule(std::move(module), std::move(ctx));
+            exitOnError(myJIT->addModule(std::move(threadSafeModule), runtime));
+            initialModulesAndPassManager();
+
+            auto exprSymbol = exitOnError(myJIT->lookup("__anon_expr"));
+
+            double (*FP)() = (double (*)())(intptr_t)exprSymbol.getAddress();
+            fprintf(stderr, "Evaluated to %f\n", FP());
+
+            exitOnError(runtime->remove());
         }
     }
     else
@@ -57,11 +68,15 @@ void mainLoop()
 
 int main()
 {
+    initializeNativeTargets();
     initialBinOpPrecs();
 
     printf("ready> ");
     getNextToken();
-    initialModules();
+
+    myJIT = exitOnError(llvm::orc::HadiJIT::Create());
+
+    initialModulesAndPassManager();
 
     mainLoop();
 

@@ -193,7 +193,7 @@ unique_ptr<FunctionExpressionAST> parseTopLevelExpression()
 {
     if (auto exp = parseExpression())
     {
-        auto prototype = make_unique<PrototypeAST>("", vector<string>());
+        auto prototype = make_unique<PrototypeAST>("__anon_expr", vector<string>());
         return make_unique<FunctionExpressionAST>(move(prototype), move(exp));
     }
 

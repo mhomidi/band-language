@@ -15,21 +15,25 @@
 #include "llvm/Transforms/InstCombine/InstCombine.h"
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
+#include "llvm/Support/Error.h"
 #include <map>
 #include "Parser.h"
+#include "Common.h"
 
 using namespace llvm;
 
-static std::unique_ptr<LLVMContext> ctx;
+std::unique_ptr<llvm::orc::HadiJIT> myJIT;
+std::unique_ptr<LLVMContext> ctx;
 static std::unique_ptr<IRBuilder<>> builder;
-static std::unique_ptr<Module> module;
+std::unique_ptr<Module> module;
 static map<std::string, Value *> namedValues;
 static std::unique_ptr<legacy::FunctionPassManager> functionPassManager;
 
-void initialModules()
+void initialModulesAndPassManager()
 {
     ctx = std::make_unique<LLVMContext>();
     module = std::make_unique<Module>("myModule", *ctx);
+    module->setDataLayout(myJIT->getDataLayout());
 
     builder = std::make_unique<IRBuilder<>>(*ctx);
 
@@ -41,6 +45,13 @@ void initialModules()
     functionPassManager->add(createCFGSimplificationPass());
 
     functionPassManager->doInitialization();
+}
+
+void initializeNativeTargets()
+{
+    InitializeNativeTarget();
+    InitializeNativeTargetAsmPrinter();
+    InitializeNativeTargetAsmParser();
 }
 
 Value *logErrorValue(const char *errStr)
