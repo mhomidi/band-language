@@ -15,6 +15,7 @@ unique_ptr<PrototypeAST> parsePrototype();
 unique_ptr<FunctionExpressionAST> parseDefinition();
 unique_ptr<FunctionExpressionAST> parseTopLevelExpression();
 unique_ptr<ExpressionAST> parseIfExpresion();
+unique_ptr<ExpressionAST> parseForExpresion();
 
 int getTokPrecedence();
 

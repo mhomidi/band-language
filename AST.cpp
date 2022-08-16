@@ -221,3 +221,7 @@ Value *IfExpressionAST::codegen()
 
     return phiNode;
 }
+
+Value *ForExpressionAST::codegen()
+{
+}

@@ -74,6 +74,19 @@ public:
     Value *codegen() override;
 };
 
+class ForExpressionAST : public ExpressionAST
+{
+    string varName;
+    unique_ptr<ExpressionAST> start, end, step, body;
+
+public:
+    ForExpressionAST(string &varName, unique_ptr<ExpressionAST> start, unique_ptr<ExpressionAST> end,
+                     unique_ptr<ExpressionAST> step, unique_ptr<ExpressionAST> body)
+        : varName(varName), start(move(start)), end(move(end)), step(move(step)), body(move(body)) {}
+
+    Value *codegen() override;
+};
+
 class PrototypeAST
 {
     string name;

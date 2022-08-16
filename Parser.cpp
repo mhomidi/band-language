@@ -92,6 +92,8 @@ unique_ptr<ExpressionAST> parsePrimary()
         return parseParenthesesExpr();
     case tok_if:
         return parseIfExpresion();
+    case tok_for:
+        return parseForExpresion();
     default:
         return logError("Unknown token");
     }
@@ -227,4 +229,50 @@ unique_ptr<ExpressionAST> parseIfExpresion()
         return nullptr;
 
     return make_unique<IfExpressionAST>(move(condition), move(thenStmt), move(elseStmt));
+}
+
+unique_ptr<ExpressionAST> parseForExpresion()
+{
+    getNextToken();
+
+    if (curToken != tok_identifier)
+        return logError("expected identifier after for");
+
+    string idName = identifierStr;
+    getNextToken();
+
+    if (curToken != '=')
+        return logError("expected '='after identifier");
+    getNextToken();
+
+    auto start = parseExpression();
+    if (!start)
+        return nullptr;
+
+    if (curToken != ',')
+        return logError("expected ',' after initialization");
+    getNextToken();
+
+    auto end = parseExpression();
+    if (!end)
+        return nullptr;
+
+    unique_ptr<ExpressionAST> step;
+    if (curToken == ',')
+    {
+        getNextToken();
+
+        step = parseExpression();
+        if (!step)
+            return nullptr;
+    }
+
+    if (curToken != tok_in)
+        return logError("expected 'in' at the end of the loop");
+
+    auto body = parseExpression();
+    if (!body)
+        return nullptr;
+
+    return make_unique<ForExpressionAST>(idName, move(start), move(end), move(step), move(body));
 }
