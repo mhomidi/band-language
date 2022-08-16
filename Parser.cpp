@@ -90,6 +90,8 @@ unique_ptr<ExpressionAST> parsePrimary()
         return parseNumberExpr();
     case '(':
         return parseParenthesesExpr();
+    case tok_if:
+        return parseIfExpresion();
     default:
         return logError("Unknown token");
     }
@@ -198,4 +200,31 @@ unique_ptr<FunctionExpressionAST> parseTopLevelExpression()
     }
 
     return nullptr;
+}
+
+unique_ptr<ExpressionAST> parseIfExpresion()
+{
+    getNextToken();
+
+    auto condition = parseExpression();
+    if (!condition)
+        return nullptr;
+
+    if (curToken != tok_then)
+        return logError("expected then");
+    getNextToken();
+
+    auto thenStmt = parseExpression();
+    if (!thenStmt)
+        return nullptr;
+
+    if (curToken != tok_else)
+        return logError("expected else");
+    getNextToken();
+
+    auto elseStmt = parseExpression();
+    if (!elseStmt)
+        return nullptr;
+
+    return make_unique<IfExpressionAST>(move(condition), move(thenStmt), move(elseStmt));
 }

@@ -62,6 +62,18 @@ public:
     Value *codegen() override;
 };
 
+class IfExpressionAST : public ExpressionAST
+{
+    unique_ptr<ExpressionAST> cond, thenStmt, elseStmt;
+
+public:
+    IfExpressionAST(unique_ptr<ExpressionAST> cond, unique_ptr<ExpressionAST> thenStmt,
+                    unique_ptr<ExpressionAST> elseStmt)
+        : cond(move(cond)), thenStmt(move(thenStmt)), elseStmt(move(elseStmt)) {}
+
+    Value *codegen() override;
+};
+
 class PrototypeAST
 {
     string name;

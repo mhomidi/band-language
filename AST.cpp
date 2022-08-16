@@ -174,3 +174,50 @@ Function *FunctionExpressionAST::codegen()
     function->eraseFromParent();
     return nullptr;
 }
+
+Value *IfExpressionAST::codegen()
+{
+    Value *conditionValue = this->cond->codegen();
+
+    if (!conditionValue)
+        return nullptr;
+
+    conditionValue = builder->CreateFCmpONE(
+        conditionValue, ConstantFP::get(*ctx, APFloat(0.0)), "ifcond");
+
+    Function *function = builder->GetInsertBlock()->getParent();
+    BasicBlock *thenBasicBlock = BasicBlock::Create(*ctx, "then_stmt", function);
+    BasicBlock *elseBasicBlock = BasicBlock::Create(*ctx, "else_stmt");
+    BasicBlock *mergeBasicBlock = BasicBlock::Create(*ctx, "merge_stmt");
+
+    builder->CreateCondBr(conditionValue, thenBasicBlock, elseBasicBlock);
+
+    builder->SetInsertPoint(thenBasicBlock);
+
+    Value *thenValue = this->thenStmt->codegen();
+    if (!thenValue)
+        return nullptr;
+
+    builder->CreateBr(mergeBasicBlock);
+    thenBasicBlock = builder->GetInsertBlock();
+
+    function->getBasicBlockList().push_back(elseBasicBlock);
+    builder->SetInsertPoint(elseBasicBlock);
+
+    Value *elseValue = this->elseStmt->codegen();
+    if (!elseValue)
+        return nullptr;
+
+    builder->CreateBr(mergeBasicBlock);
+    elseBasicBlock = builder->GetInsertBlock();
+
+    function->getBasicBlockList().push_back(mergeBasicBlock);
+    builder->SetInsertPoint(mergeBasicBlock);
+
+    PHINode *phiNode = builder->CreatePHI(Type::getDoubleTy(*ctx), 2, "iftmp");
+
+    phiNode->addIncoming(thenValue, thenBasicBlock);
+    phiNode->addIncoming(elseValue, elseBasicBlock);
+
+    return phiNode;
+}

@@ -14,6 +14,7 @@ unique_ptr<ExpressionAST> parseBinaryOpRHS(int opCode, unique_ptr<ExpressionAST>
 unique_ptr<PrototypeAST> parsePrototype();
 unique_ptr<FunctionExpressionAST> parseDefinition();
 unique_ptr<FunctionExpressionAST> parseTopLevelExpression();
+unique_ptr<ExpressionAST> parseIfExpresion();
 
 int getTokPrecedence();
 

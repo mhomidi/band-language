@@ -21,7 +21,12 @@ int getToken()
 
         if (identifierStr == "def")
             return tok_def;
-
+        if (identifierStr == "if")
+            return tok_if;
+        if (identifierStr == "then")
+            return tok_then;
+        if (identifierStr == "else")
+            return tok_else;
         return tok_identifier;
     }
     else if (isdigit(lastChar) || lastChar == '.')
