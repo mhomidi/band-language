@@ -270,6 +270,8 @@ unique_ptr<ExpressionAST> parseForExpresion()
     if (curToken != tok_in)
         return logError("expected 'in' at the end of the loop");
 
+    getNextToken();
+
     auto body = parseExpression();
     if (!body)
         return nullptr;

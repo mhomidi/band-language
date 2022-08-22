@@ -224,4 +224,58 @@ Value *IfExpressionAST::codegen()
 
 Value *ForExpressionAST::codegen()
 {
+    Value *startValue = this->start->codegen();
+    if (!startValue)
+        return nullptr;
+
+    Function *function = builder->GetInsertBlock()->getParent();
+    BasicBlock *preHeaderBasicBlock = builder->GetInsertBlock();
+    BasicBlock *loopBasicBlock = BasicBlock::Create(*ctx, "loop", function);
+    builder->CreateBr(loopBasicBlock);
+
+    builder->SetInsertPoint(loopBasicBlock);
+
+    PHINode *phiVariable = builder->CreatePHI(Type::getDoubleTy(*ctx), 2, this->varName.c_str());
+    phiVariable->addIncoming(startValue, preHeaderBasicBlock);
+
+    Value *oldValue = namedValues[this->varName];
+    namedValues[this->varName] = phiVariable;
+
+    if (!this->body->codegen())
+        return nullptr;
+
+    Value *stepValue = nullptr;
+    if (this->step)
+    {
+        stepValue = this->step->codegen();
+        if (!stepValue)
+            return nullptr;
+    }
+    else
+    {
+        stepValue = ConstantFP::get(*ctx, APFloat(1.0));
+    }
+
+    Value *nextValue = builder->CreateFAdd(phiVariable, stepValue, "nextval");
+
+    Value *endCondition = this->end->codegen();
+    if (!endCondition)
+        return nullptr;
+
+    endCondition = builder->CreateFCmpONE(endCondition, ConstantFP::get(*ctx, APFloat(0.0)), "loopcond");
+    BasicBlock *loopEndBasicBlock = builder->GetInsertBlock();
+    BasicBlock *afterloopBasicBlock = BasicBlock::Create(*ctx, "afterloop", function);
+
+    builder->CreateCondBr(endCondition, loopBasicBlock, afterloopBasicBlock);
+
+    builder->SetInsertPoint(afterloopBasicBlock);
+
+    phiVariable->addIncoming(nextValue, loopEndBasicBlock);
+
+    if (oldValue)
+        namedValues[this->varName] = oldValue;
+    else
+        namedValues.erase(this->varName);
+
+    return Constant::getNullValue(Type::getDoubleTy(*ctx));
 }
