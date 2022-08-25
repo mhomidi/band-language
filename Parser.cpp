@@ -113,7 +113,6 @@ int getTokPrecedence()
 
 void initialBinOpPrecs()
 {
-    binOperatorPrecedence['='] = 1;
     binOperatorPrecedence['<'] = 10;
     binOperatorPrecedence['-'] = 20;
     binOperatorPrecedence['+'] = 20;

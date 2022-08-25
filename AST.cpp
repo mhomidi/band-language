@@ -100,9 +100,6 @@ Value *BinaryExpAST::codegen()
         return builder->CreateUIToFP(result, Type::getDoubleTy(*ctx), "comres");
     }
 
-    case '=':
-        return builder->CreateStore(leftHandSide, rightHandSide);
-
     default:
         return logErrorValue("Unknown operation");
     }
