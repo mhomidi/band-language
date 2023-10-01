@@ -1,8 +1,8 @@
-# Toy Language
+# Band Language
 
-In the context of LLVM (Low Level Virtual Machine), a "toy language" refers to a simple, minimalistic programming language that is often used for educational or illustrative purposes. Toy languages are not intended for practical use but rather serve as a means to demonstrate and teach various concepts related to compiler design, code generation, and program optimization using LLVM.
+In the context of LLVM, "Band language" is a simple, minimalistic programming language that is often used for educational or illustrative purposes. Band language is not intended for practical use but rather serves as a means to demonstrate and teach various concepts related to compiler design, code generation, and program optimization using LLVM.
 
-Developing a toy language with LLVM involves defining the syntax and semantics of the language, creating a lexer and parser to analyze the code, and generating LLVM Intermediate Representation (IR) code from the parsed source code. This IR code can then be further optimized and finally compiled to machine code or executed in an LLVM-based virtual machine.
+Developing a language with LLVM involves defining the syntax and semantics of the language, creating a lexer and parser to analyze the code, and generating LLVM Intermediate Representation (IR) code from the parsed source code. This IR code can then be further optimized and finally compiled to machine code or executed in an LLVM-based virtual machine.
 
 ## Sources
 
