@@ -7,7 +7,9 @@ Developing a language with LLVM involves defining the syntax and semantics of th
 ## Sources
 
 **AST**: represents the hierarchical structure of a program's source code in a tree-like format, used in language development for parsing and analyzing code.
+
 **Parser**: analyzes the syntax of source code and converts it into a structured representation
+
 **Lexer**: breaks down the source code into individual tokens or lexemes for subsequent parsing and analysis.
 
 ## Run
